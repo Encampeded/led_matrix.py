@@ -14,19 +14,19 @@ matrix.set_matrix(0, 0, False)
 matrix.send_brightness(32)
 
 matrix.send_matrix()
-
 matrix.reset()
 
-# draw_line() draws a line (duh) between two specified points
+# draw_line() draws a line between two specified points
 # It can draw lines beyond vertical/horizontal, however the algorithm kinda sucks lol. I don't recommend using it
 matrix.draw_line([1, 3], [1, 8])
 matrix.draw_line([3, 4], [7, 4])
 
-# draw_rectangle draws a rectangle (duh x2)
-# First point is top left, with the second being bottom right
+# draw_rectangle() draws a rectangle (duh)
+# First point is top left, with the second being bottom right, there's no error checking for this,
+# and what happens when you don't is undocumentede AKA I'm too lazy to check. Just do it the right way please.
 matrix.draw_rectangle([2, 15], [7, 25])
 
-# Add a true to make it filled
+# Add True to make the rectangle filled
 matrix.draw_rectangle([1, 27], [7, 32], True)
 
 matrix.send_matrix()
