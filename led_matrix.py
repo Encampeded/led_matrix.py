@@ -23,7 +23,7 @@ class Matrix:
 
         # If X's are the same, draw vertical line
         if point1[0] == point2[0]:
-            for i in range(point1[1], point2[1]+1):
+            for i in range(point1[1], point2[1]+1, -1 if point1[1] > point2[1] else 1):
                 self.set_matrix(point1[0], i)
             return
 
