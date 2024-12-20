@@ -20,11 +20,14 @@ matrix.reset()
 # draw_line() draws a line (duh) between two specified points
 # It can draw lines beyond vertical/horizontal, however the algorithm kinda sucks lol. I don't recommend using it
 matrix.draw_line([1, 3], [1, 8])
-matrix.draw_line([1, 3], [5, 3])
+matrix.draw_line([3, 4], [7, 4])
 
 # draw_rectangle draws a rectangle (duh x2)
 # First point is top left, with the second being bottom right
 matrix.draw_rectangle([2, 15], [7, 25])
+
+# Add a true to make it filled
+matrix.draw_rectangle([1, 27], [7, 32], True)
 
 matrix.send_matrix()
 
@@ -32,7 +35,7 @@ matrix.send_matrix()
 # Command Reference: https://github.com/FrameworkComputer/inputmodule-rs/blob/main/commands.md
 matrix.send_brightness(32)
 matrix.send(0x01, [0x04])
-matrix.send(0x04, [False])
+matrix.send(0x04, [True])
 
 # If you're curious about additional functionality, I recommend looking at the source, led_matrix.py
 # It's really quite simple and I've commented most things that aren't immediately obvious

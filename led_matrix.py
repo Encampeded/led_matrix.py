@@ -1,15 +1,13 @@
 import serial
-# UC(0x130D3) i dont remember why i put this here, but it's here now
 
 class Matrix:
 
-    # The working array that the user modifies
+    # The working array that the user modifies through set_matrix
     matrix = [False for i in range(312)]
 
     def reset(self):
         self.matrix = [False for i in range(312)]
 
-    # Set pixel on grid to on/off (defaults on)
     # X=0-8, Y=0-33, (0, 0) is top left
     def set_matrix(self, x, y, value=True):
         if not (0 <= x <= 8 and 0 <= y <= 33):
@@ -43,8 +41,6 @@ class Matrix:
             self.set_matrix(i, round(point1[1]+(slope*(i-point1[0]))))
 
 
-
-    # Untested/unfinished function. Ignore
     def draw_rectangle(self, point1, point2, filled=False):
         # Draw horizontal lines
         for y in [point1[1], point2[1]]:
