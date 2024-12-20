@@ -1,7 +1,7 @@
 # led_matrix.py
 A simple Python library for interfacing with the Framework 16 LED Matrix
 
-'''
+```
 import led_matrix
 
 matrix = led_matrix.Matrix()
@@ -40,5 +40,4 @@ matrix.send(0x04, [False])
 
 # If you're curious about additional functionality, I recommend looking at the source, led_matrix.py
 # It's really quite simple and I've commented most things that aren't immediately obvious
-
-'''
+```
