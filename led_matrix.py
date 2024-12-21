@@ -72,7 +72,7 @@ class Matrix:
 
     def send_matrix(self):
 
-        # DrawBW command takes 33 8-bit binary integers, each representing one line
+        # DrawBW (0x06) command takes 33 8-bit binary integers, each representing one line
         matrix_encoded = []
 
         for i in range(0, 312, 8):
