@@ -17,7 +17,7 @@ def directional_move(coords, direction, toadd):
 
     return coords
 
-def non_opposite(input_queue, key):
+def is_valid(input_queue, key):
     for opposites in [['left', 'right'], ['up', 'down']]:
         if input_queue[-1] in opposites and key in opposites:
             return False
@@ -32,13 +32,21 @@ gameboard.send_brightness(BRIGHTNESS)
 
 apple = [random.randint(0, 8), random.randint(0, 33)]
 snake = [[4, 16]]
+
 input_queue = []
+input_status = {
+    'up': False,
+    'down': False,
+    'left': False,
+    'right': False
+}
 
 gameboard.set_matrix(snake[0][0], snake[0][1])
 gameboard.set_matrix(apple[0], apple[1])
 
 gameboard.send_matrix()
 
+# Wait for player input
 while input_queue == []:
     for key in ["up", "down", "left", "right"]:
         if is_pressed(key):
@@ -75,7 +83,7 @@ while True:
 
         gameboard.reset()
         gameboard.send_matrix()
-        gameboard.send_brightness(128)
+        gameboard.send_brightness(BRIGHTNESS)
         quit()
 
     # Update the snake's body
@@ -84,17 +92,23 @@ while True:
 
     # Draw
     gameboard.reset()
-    gameboard.set_matrix(apple[0], apple[1])
 
+    gameboard.set_matrix(apple[0], apple[1])
     for position in snake:
         gameboard.set_matrix(position[0], position[1])
+
     gameboard.send_matrix()
 
     # This is pretty scuffed, but unfortunately live input on linux in python seems to be even more scuffed
+    # Basically, track if a key if pressed or not. If it's newly pressed, then check if the input is valid
+    # If it is, add it to the input_queue.
     while time()-dtime < 0.1:
         for key in ["up", "down", "left", "right"]:
-            if is_pressed(key) and key not in input_queue and non_opposite(input_queue, key):
-                input_queue.append(key)
+            if is_pressed(key) != input_status[key]:
+                input_status[key] = not input_status[key]
+
+                if is_valid(input_queue, key) and input_status[key]:
+                    input_queue.append(key)
 
     if len(input_queue) > 1:
         input_queue.pop(0)
