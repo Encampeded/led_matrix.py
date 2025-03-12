@@ -1,6 +1,49 @@
 # led_matrix.py
 A simple Python library for interfacing with the Framework 16 LED Matrix
 
-See example.py for basic usage, or just look through led_matrix.py. I've commented most things that aren't immediately obvious.
+## Usage
 
-Currently you can't set the brightness of individual LEDs, only the entire matrix. It's clearly possible based on the built in gradient pattern, I'm just not smart enough to figure out how.
+I don't feel like putting this on PyPy, so just download led_matrix.py and put it in your project folder.
+``` 
+import led_matrix
+
+matrix = led_matrix.Matrix()
+```
+Set LEDs on/off using set_matrix(x, y, brightness)
+
+The matrix starts at the top left at (0, 0), and ends at (8, 33)
+```
+matrix.set_matrix(0, 0, 255)
+
+# Brightness is 0-255, and defaults to default_brightness 128 if unspecified
+
+matrix.set_matrix(2, 0)   # 128
+matrix.default_brightness = 255
+matrix.set_matrix(0, 3)   # 255
+```
+Use qsend() or csend() to display the current array on the matrix
+
+csend() includes per-led brightness however it is somewhat slow (~200ms).
+
+qsend() displays each led at the same  brightness but at significantly quicker speeds (~50ms)
+```
+matrix.csend()
+matrix.qsend()
+```
+
+reset() sets all LEDs to the same value (default 0)
+
+```
+# Set all LEDs to max brightness
+matrix.reset(255)
+# Turn off all LEDs
+matrix.reset()
+```
+Send patterns or other custom commands using send(command, [parameters])
+
+Comand Reference: https://github.com/FrameworkComputer/inputmodule-rs/blob/main/commands.md
+```
+# Display the zigzag pattern, and animate
+matrix.send(0x01, [0x04])
+matrix.send(0x04, [True])
+```
