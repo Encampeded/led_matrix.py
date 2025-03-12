@@ -27,7 +27,10 @@ class Matrix:
                 res = s.read(32)
                 return res
 
+    # Column Send, uses StageCol (0x07) and FlushCols (0x08)
+    # Sends each of the 9 columns individually, then draws them
     def csend(self):
+
         columns = []
         for x in range(9):
             column = []
@@ -38,13 +41,11 @@ class Matrix:
         for i in range(9):
             self.send(0x07, [i, *columns[i]])
 
-        self.prev_columns = columns
-
         self.send(0x08, [])
 
+    # Quick Send, uses DrawBW (0x06) that takes 33 8-bit integers, each representing 8 LEDs starting from (0, 0)
     def qsend(self, brightness=default_brightness):
 
-        # DrawBW (0x06) command takes 33 8-bit binary integers, each representing one line
         matrix_encoded = []
 
         for i in range(0, 312, 8):
@@ -56,7 +57,6 @@ class Matrix:
             line = int("".join(["01"[i] for i in line]), 2)
 
             matrix_encoded.append(line)
-
 
         self.send(0x00, [brightness])
         self.send(0x06, matrix_encoded)
