@@ -42,7 +42,7 @@ matrix.reset()
 Send patterns or other custom commands using send(command, [parameters])
 
 Comand Reference: https://github.com/FrameworkComputer/inputmodule-rs/blob/main/commands.md
-```
+```python
 # Display the zigzag pattern, and animate
 matrix.send(0x01, [0x04])
 matrix.send(0x04, [True])
