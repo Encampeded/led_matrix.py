@@ -34,8 +34,9 @@ qsend(brightness) displays each led at the same brightness but at significantly 
 matrix.csend()
 
 # Display all LEDs at default_brightness
-matrix.qsend()  
-matrix.q
+matrix.qsend()
+# ...or at 32 brightness
+matrix.qsend(32)
 ```
 
 reset() resets all LEDs to the one value
