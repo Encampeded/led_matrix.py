@@ -11,7 +11,7 @@ import led_matrix
 matrix = led_matrix.Matrix()
 
 # You can set the default_brightness attribute in the constructor
-# All methods use default_brightness as the, well, default brightness
+# All methods use default_brightness as the default if brightness is unspecified
 matrix = led_matrix.Matrix(64)
 ```
 Set LEDs on/off using set_matrix(x, y, brightness)
@@ -28,10 +28,14 @@ Use qsend() or csend() to display the current array on the matrix
 
 csend() includes per-led brightness however it is somewhat slow (~200ms)
 
-qsend() displays each led at the same  brightness but at significantly quicker speeds (~50ms)
+qsend(brightness) displays each led at the same brightness but at significantly quicker speeds (~50ms)
 ```python
+# Display each LED at its specified brightness
 matrix.csend()
-#matrix.qsend()
+
+# Display all LEDs at default_brightness
+matrix.qsend()  
+matrix.q
 ```
 
 reset() resets all LEDs to the one value
