@@ -109,6 +109,7 @@ class Matrix:
 
             matrix_encoded.append(line)
 
-        self.send(0x00, [brightness])
         self.send(0x06, matrix_encoded)
+        self.send(0x00, [brightness])
+
 
