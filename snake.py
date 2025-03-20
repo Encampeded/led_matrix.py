@@ -1,5 +1,5 @@
 import led_matrix, random
-from time import time
+from time import time, sleep
 from keyboard import is_pressed
 
 BRIGHTNESS = 128
@@ -27,9 +27,7 @@ def is_valid(input_queue, key):
 
 random.seed(time())
 
-gameboard = led_matrix.Matrix()
-
-gameboard.default_brightness = BRIGHTNESS
+gameboard = led_matrix.Matrix(BRIGHTNESS)
 
 apple = [random.randint(0, 8), random.randint(0, 33)]
 snake = [[4, 16]]
@@ -45,7 +43,7 @@ input_status = {
 gameboard.set_matrix(snake[0][0], snake[0][1])
 gameboard.set_matrix(apple[0], apple[1])
 
-gameboard.csend()
+gameboard.qsend()
 
 # Wait for player input
 while input_queue == []:
@@ -80,11 +78,10 @@ while True:
     if snake[0] in snake[1:]:
 
         for i in reversed(range(0, BRIGHTNESS, 4)):
-            gameboard.send(0x00, [i])
+            gameboard.qsend(i)
 
         gameboard.reset()
-        gameboard.csend()
-        gameboard.send(0x00, [BRIGHTNESS])
+        gameboard.qsend()
         quit()
 
     # Update the snake's body
@@ -98,7 +95,7 @@ while True:
     for position in snake:
         gameboard.set_matrix(position[0], position[1])
 
-    gameboard.csend()
+    gameboard.qsend()
 
     # This is pretty scuffed, but unfortunately live input on linux in python seems to be even more scuffed
     # Basically, track if a key if pressed or not. If it's newly pressed, then check if the input is valid
