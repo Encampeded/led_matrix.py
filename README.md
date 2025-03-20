@@ -46,11 +46,11 @@ matrix.reset(255)
 
 Draw horizontal or vertical lines with draw_line(point1, point2, fade, brightness)
 ```python
-draw_line([0, 0], [0, 33])
-draw_line([0, 9], [5, 9])
+matrix.draw_line([0, 0], [0, 33])
+matrix.draw_line([0, 9], [5, 9])
 
 # Make the line fade to point2 by adding a fade length
-draw_line([2, 0], [8, 0], 3)
+matrix.draw_line([2, 0], [8, 0], 3)
 ```
 
 Send patterns or other custom commands using send(command, [parameters])
