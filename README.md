@@ -10,21 +10,19 @@ import led_matrix
 # Create a matrix object
 matrix = led_matrix.Matrix()
 
-# Set default_brightness in the constructor
-# All methods use default_brightness as the default brightness when setting LEDs
+# You can set the default_brightness attribute in the constructor
+# All methods use default_brightness as the, well, default brightness
 matrix = led_matrix.Matrix(64)
 ```
 Set LEDs on/off using set_matrix(x, y, brightness)
 
-Brightness defaults to default_brightness
-
 The matrix starts at the top left at (0, 0), and ends at (8, 33)
 ```python
-matrix.set_matrix(0, 0)
-matrix.set_matrix(2, 0, 255)
+matrix.set_matrix(0, 0) 	    # 64
+matrix.set_matrix(2, 0, 255) # 255
 
 matrix.default_brightness = 255
-matrix.set_matrix(0, 3)   # 255
+matrix.set_matrix(0, 3)   	# 255
 ```
 Use qsend() or csend() to display the current array on the matrix
 
@@ -49,7 +47,7 @@ matrix.reset(255)
 Draw horizontal or vertical lines with draw_line(point1, point2, fade, brightness)
 ```python
 draw_line([0, 0], [0, 33])
-draw_line()
+draw_line([0, 3], [5, 3])
 
 # Make the line fade to point2 by adding a fade length
 draw_line([2, 0], [8, 0], 3)
