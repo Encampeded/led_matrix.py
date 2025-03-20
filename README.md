@@ -22,7 +22,7 @@ matrix.set_matrix(0, 0)      # 64
 matrix.set_matrix(2, 0, 255) # 255
 
 matrix.default_brightness = 255
-matrix.set_matrix(0, 3)   	# 255
+matrix.set_matrix(0, 3)      # 255
 ```
 Use qsend() or csend() to display the current array on the matrix
 
