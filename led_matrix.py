@@ -3,11 +3,11 @@ import serial
 class Matrix:
 
     def __init__(self, default_brightness: int = 128) -> None:
-        self.matrix = [0 for i in range(312)]
+        self.reset()
         self.default_brightness = default_brightness
 
     def reset(self, brightness: int = 0) -> None:
-        self.brightness = [value for i in range(312)]
+        self.matrix = [brightness for i in range(315)]
 
     def set_matrix(self, x: int, y: int, brightness: int = None) -> None:
 
@@ -18,6 +18,7 @@ class Matrix:
         if not 0 <= brightness <= 255:
             raise ValueError(f"Brightness {brightness} out of range. Brightness must be 0-255")
 
+        print((y * 9) + x, brightness)
         self.matrix[(y * 9) + x] = brightness
 
 
