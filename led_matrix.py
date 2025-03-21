@@ -57,15 +57,15 @@ class Matrix:
         if fade > len(points):
             raise ValueError(f"Fade length {fade} longer than line length {len(points)}")
 
-        for point in points[:-fade]:
+        for point in (points[:-fade] if fade else points):
             self.set_matrix(point[0], point[1], brightness)
 
         if fade:
             bdiff = int(brightness / (fade + 1))
             for b, i in enumerate(range(len(points) - fade, len(points))):
 
-                self.set_matrix(points[i][0], points[i]
-                                [1], int(brightness - ((b + 1) * bdiff)))
+                self.set_matrix(points[i][0], points[i][1],
+                                int(brightness - ((b + 1) * bdiff)))
 
 
     # Copied from framework example
