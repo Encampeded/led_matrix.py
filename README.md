@@ -1,25 +1,26 @@
 # led_matrix.py
 A simple Python library for interfacing with the Framework 16 LED Matrix
 
-## Usage
+## Getting started
 
-I don't feel like putting this on PyPy, so just download led_matrix.py and put it in your project folder.
+I don't feel like putting this on PyPy, so:
+Install pyserial (and [keyboard](https://pypi.org/project/keyboard/) if you want to try the example snake.py program) and put led_matrix.py in your project folder.
 ``` python
 import led_matrix
 
 # Create a matrix object
 matrix = led_matrix.Matrix()
 
-# You can set the default_brightness attribute in the constructor
-# All methods use default_brightness as the default if brightness is unspecified
+# Set the default_brightness attribute (0-255) in the constructor
+# All methods use default_brightness as the, well, default brightness when unspecified
 matrix = led_matrix.Matrix(64)
 ```
-Set LEDs on/off using set_matrix(x, y, brightness)
+Set LEDs on/off using set_matrix()
 
 The matrix starts at the top left at (0, 0), and ends at (8, 33)
 ```python
-matrix.set_matrix(0, 0)      # 64
-matrix.set_matrix(2, 0, 255) # 255
+matrix.set_matrix(0, 0)
+matrix.set_matrix(2, 0, 255)
 
 matrix.default_brightness = 255
 matrix.set_matrix(0, 3)      # 255
