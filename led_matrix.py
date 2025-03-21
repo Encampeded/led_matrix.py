@@ -6,11 +6,12 @@ class Matrix:
         self.reset()
         self.default_brightness = default_brightness
 
+    # While 305 is the bottom left, we need 6 extra values
+    # for qsend, whose last 8bits start at 304
     def reset(self, brightness: int = 0) -> None:
-        self.matrix = [brightness for i in range(315)]
+        self.matrix = [brightness for i in range(312)]
 
     def set_matrix(self, x: int, y: int, brightness: int = None) -> None:
-
         if brightness is None: brightness = self.default_brightness
 
         if not (0 <= x <= 8 and 0 <= y <= 33):
@@ -18,7 +19,6 @@ class Matrix:
         if not 0 <= brightness <= 255:
             raise ValueError(f"Brightness {brightness} out of range. Brightness must be 0-255")
 
-        print((y * 9) + x, brightness)
         self.matrix[(y * 9) + x] = brightness
 
 
@@ -40,19 +40,17 @@ class Matrix:
 
             return result_list
 
+
         points = []
 
         # Vertical Line
         if point1[0] == point2[0]:
-            for i in betterate(point1[1], point2[1]):
-                points.append([point1[0], i])
+            points = [[point1[0], i] for i in betterate(point1[1], point2[1])]
 
         # Horizontal Line
         elif point1[1] == point2[1]:
-            for i in betterate(point1[0], point2[0]):
-                points.append([i, point1[1]])
+            points = [[i, point1[1]] for i in betterate(point1[1], point2[1])]
 
-        # Maybe I'll implement this at some point. idk
         else: raise ValueError(f"Coordinates {point1} {point2} form diagonal line\ndraw_line() only supports horizontal and vertical lines")
 
         if fade > len(points):
