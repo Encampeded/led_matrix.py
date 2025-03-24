@@ -1,5 +1,14 @@
 import serial
 
+def check_coords(x: int, y: int) -> None:
+    if not (0 <= x <= 8 and 0 <= y <= 33):
+        raise ValueError(f"Coordinates ({x}, {y}) out of range. X must be 0-8 and Y must be 0-33")
+
+def check_brightness(brightness: int) -> None:
+    if not 0 <= brightness <= 255:
+        raise ValueError(f"Brightness {brightness} out of range. Brightness must be 0-255")
+
+
 class Matrix:
 
     def __init__(self, default_brightness: int = 128) -> None:
@@ -11,13 +20,16 @@ class Matrix:
     def reset(self, brightness: int = 0) -> None:
         self.matrix = [brightness for i in range(312)]
 
+    def set_brightness(self, brightness: int) -> None:
+        check_brightness(brightness)
+
+        self.default_brightness = brightness
+
     def set_matrix(self, x: int, y: int, brightness: int = None) -> None:
         if brightness is None: brightness = self.default_brightness
 
-        if not (0 <= x <= 8 and 0 <= y <= 33):
-            raise ValueError(f"Coordinates ({x}, {y}) out of range. X must be 0-8 and Y must be 0-33")
-        if not 0 <= brightness <= 255:
-            raise ValueError(f"Brightness {brightness} out of range. Brightness must be 0-255")
+        check_coords(x, y)
+        check_brightness(brightness)
 
         self.matrix[(y * 9) + x] = brightness
 
@@ -29,7 +41,6 @@ class Matrix:
 
         return self.matrix[(y * 9) + x]
 
-
     def draw_line(self, point1: list[int], point2: list[int], fade: int = 0, brightness: int = None) -> None:
         if brightness is None: brightness = self.default_brightness
 
@@ -37,13 +48,13 @@ class Matrix:
         # Also includes the last number. probably unnecessary, but eh
         def betterate(start: int, to: int) -> list[int]:
 
-            reverse: bool = start > to  # Reverse if the start is greater.
+            # Reverse if the start is greater.
+            reverse: bool = start > to
             if start > to:
                 start, to = to, start
 
             result_list = list(range(start, to + 1))
-            if reverse:
-                result_list.reverse()
+            if reverse: result_list.reverse()
 
             return result_list
 
@@ -72,14 +83,6 @@ class Matrix:
 
                 self.set_matrix(points[i][0], points[i][1],
                                 int(brightness - ((b + 1) * bdiff)))
-
-
-    def set_brightness(self, brightness: int) -> None:
-        if not 0 <= brightness <= 255:
-            raise ValueError(f"Brightness {brightness} out of range. Brightness must be 0-255")
-
-        self.default_brightness = brightness
-
 
     # Copied from framework example
     @staticmethod
