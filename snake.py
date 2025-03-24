@@ -20,7 +20,7 @@ def directional_move(coords: list[int], direction: str, offset: int) -> list[int
 
     return coords
 
-# Checks if a keypress is valid compared to previous direction (not opposite)
+# Checks if a keypress is valid compared to previous direction (not an opposite direction)
 def is_valid(direction, key_pressed: str) -> bool:
     for opposites in [['left', 'right'], ['up', 'down']]:
         if direction in opposites and key_pressed in opposites:

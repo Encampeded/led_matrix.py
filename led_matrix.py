@@ -21,13 +21,20 @@ class Matrix:
 
         self.matrix[(y * 9) + x] = brightness
 
+    def get_matrix(self, x: int, y: int) -> int:
+        if brightness is None: brightness = self.default_brightness
+
+        if not (0 <= x <= 8 and 0 <= y <= 33):
+            raise ValueError(f"Coordinates ({x}, {y}) out of range. X must be 0-8 and Y must be 0-33")
+
+        return self.matrix[(y * 9) + x]
+
 
     def draw_line(self, point1: list[int], point2: list[int], fade: int = 0, brightness: int = None) -> None:
         if brightness is None: brightness = self.default_brightness
 
         # Range wrapper that supports betterate(10, 0), going from 10-0
-        # Also actually includes the last number, probably unnecessary, but
-        # screw you
+        # Also includes the last number. probably unnecessary, but eh
         def betterate(start: int, to: int) -> list[int]:
 
             reverse: bool = start > to  # Reverse if the start is greater.
@@ -67,19 +74,25 @@ class Matrix:
                                 int(brightness - ((b + 1) * bdiff)))
 
 
+    def set_brightness(self, brightness: int) -> None:
+        if not 0 <= brightness <= 255:
+            raise ValueError(f"Brightness {brightness} out of range. Brightness must be 0-255")
+
+        self.default_brightness = brightness
+
+
     # Copied from framework example
-    def send(self, command_id: int, parameters: list[str],
-             with_response: bool = False) -> bytes | None:
+    @staticmethod
+    def send(command_id: int, parameters: list[str],
+            with_response: bool = False) -> bytes | None:
 
         with serial.Serial('/dev/ttyACM0', 115200) as s:
             s.write([0x32, 0xAC, command_id] + parameters)
 
             if with_response:
-                res = s.read(32)
-                return res
+                return s.read(32)
 
         return None
-
 
     # Column Send, uses StageCol (0x07) and FlushCols (0x08)
     # Sends each of the 9 columns individually, then draws (flushes) them
@@ -96,7 +109,6 @@ class Matrix:
             self.send(0x07, [i, *columns[i]])
 
         self.send(0x08, [])
-
 
     # Quick Send, uses DrawBW (0x06) that takes 33 8-bit integers, each
     # representing 8 LEDs starting from (0, 0)
