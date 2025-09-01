@@ -34,7 +34,6 @@ class Matrix:
         self.matrix[(y * 9) + x] = brightness
 
     def get_matrix(self, x: int, y: int) -> int:
-        if brightness is None: brightness = self.default_brightness
 
         if not (0 <= x <= 8 and 0 <= y <= 33):
             raise ValueError(f"Coordinates ({x}, {y}) out of range. X must be 0-8 and Y must be 0-33")
@@ -69,7 +68,8 @@ class Matrix:
         elif point1[1] == point2[1]:
             points = [[i, point1[1]] for i in betterate(point1[1], point2[1])]
 
-        else: raise ValueError(f"Coordinates {point1} {point2} form diagonal line\ndraw_line() only supports horizontal and vertical lines")
+        else:
+            raise ValueError(f"Coordinates {point1} {point2} form diagonal line\ndraw_line() only supports horizontal and vertical lines")
 
         if fade > len(points):
             raise ValueError(f"Fade length {fade} longer than line length {len(points)}")
