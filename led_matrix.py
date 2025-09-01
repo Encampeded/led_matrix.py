@@ -66,7 +66,7 @@ class Matrix:
 
         # Horizontal Line
         elif point1[1] == point2[1]:
-            points = [[i, point1[1]] for i in betterate(point1[1], point2[1])]
+            points = [[i, point1[1]] for i in betterate(point1[0], point2[0])]
 
         else:
             raise ValueError(f"Coordinates {point1} {point2} form diagonal line\ndraw_line() only supports horizontal and vertical lines")
