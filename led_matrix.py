@@ -14,6 +14,8 @@ class Matrix:
     def __init__(self, default_brightness: int = 128) -> None:
         self.reset()
         self.default_brightness = default_brightness
+        # There will be a delay when first sending unless we do this.
+        self.qsend()
 
     # While 305 is the bottom left, we need 6 extra values
     # for qsend, whose last 8bits start at 304
