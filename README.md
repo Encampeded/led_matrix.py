@@ -4,7 +4,7 @@ A simple Python library for interfacing with the Framework 16 LED Matrix
 ## Getting started
 
 I don't feel like putting this on PyPy, so:
-Install pyserial (and [keyboard](https://pypi.org/project/keyboard/) if you want to try the example snake.py program) and put led_matrix.py in your project folder.
+Install pyserial (and [keyboard](https://pypi.org/project/keyboard/) if you want to try the example games) and put led_matrix.py in your project folder.
 ``` python
 import led_matrix
 
