@@ -50,7 +50,7 @@ class Matrix:
         def betterate(start: int, to: int) -> list[int]:
 
             # Reverse if the start is greater.
-            reverse: bool = start > to
+            reverse = start > to
             if start > to:
                 start, to = to, start
 
