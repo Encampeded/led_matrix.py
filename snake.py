@@ -1,6 +1,5 @@
 import led_matrix
 import random
-import sys
 from time import time
 from keyboard import is_pressed
 
@@ -88,7 +87,7 @@ while True:
 
         gameboard.reset()
         gameboard.qsend()
-        sys.exit(0)
+        break
 
     # Update the snake's body
     for i in range(1, len(snake)):

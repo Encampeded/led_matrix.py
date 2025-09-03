@@ -1,5 +1,4 @@
 import led_matrix
-import os
 from time import time
 from keyboard import is_pressed
 from random import shuffle
@@ -205,10 +204,7 @@ while True:
 
     if not draw:
         continue
-
-    os.system('cls' if os.name=='nt' else 'clear')
-    print("Level:", level)
-    print("Score:", score)
+    print(f"\033cLevel: {level}\nScore: {score}")
 
     game.reset()
 
