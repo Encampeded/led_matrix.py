@@ -1,4 +1,4 @@
-import serial
+from serial import Serial
 
 def check_coords(x: int, y: int) -> None:
     if not (0 <= x <= 8 and 0 <= y <= 33):
@@ -11,11 +11,10 @@ def check_brightness(brightness: int) -> None:
 
 class Matrix:
 
-    def __init__(self, default_brightness: int = 128) -> None:
+    def __init__(self, default_brightness: int = 128, serial_port: str = "/dev/ttyACM0") -> None:
         self.reset()
         self.default_brightness = default_brightness
-        # There will be a delay when first sending unless we do this.
-        self.qsend()
+        self.serial_port = Serial(serial_port, 115200)
 
     # While 305 is the bottom left, we need 6 extra values
     # for qsend, whose last 8bits start at 304
@@ -87,15 +86,12 @@ class Matrix:
                                 int(brightness - ((b + 1) * bdiff)))
 
     # Copied from framework example
-    @staticmethod
-    def send(command_id: int, parameters: list[str],
-            with_response: bool = False) -> bytes | None:
+    def send(self, command_id: int, parameters: list[str], with_response: bool = False) -> bytes | None:
 
-        with serial.Serial('/dev/ttyACM0', 115200) as s:
-            s.write([0x32, 0xAC, command_id] + parameters)
+        self.serial_port.write([0x32, 0xAC, command_id] + parameters)
 
-            if with_response:
-                return s.read(32)
+        if with_response:
+            return self.serial_port.read(32)
 
         return None
 
