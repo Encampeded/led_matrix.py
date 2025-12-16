@@ -35,9 +35,7 @@ class Matrix:
         self.matrix[(y * 9) + x] = brightness
 
     def get_matrix(self, x: int, y: int) -> int:
-
-        if not (0 <= x <= 8 and 0 <= y <= 33):
-            raise ValueError(f"Coordinates ({x}, {y}) out of range. X must be 0-8 and Y must be 0-33")
+        check_coords(x, y)
 
         return self.matrix[(y * 9) + x]
 

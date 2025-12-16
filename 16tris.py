@@ -1,7 +1,7 @@
 import led_matrix
-from time import time
 from keyboard import is_pressed
 from random import shuffle
+from time import perf_counter
 
 # ---------------- README ---------------- #
 #
@@ -12,6 +12,8 @@ from random import shuffle
 # Z: Rotate Counter-Clockwise
 # X: Hard Drop
 #
+# You can change the brightness with the
+# BRIGHTNESS variable below. 0-255
 #
 # If you're on Linux, you'll need to run
 # python as sudo so it can get input.
@@ -20,6 +22,8 @@ from random import shuffle
 # messy. Sorry (but idc lol it works)
 #
 # ---------------------------------------- #
+
+BRIGHTNESS = 64
 
 TETROMINOS = [
     [
@@ -87,12 +91,12 @@ def collides(tetromino: list[list[int]], position: list[int]) -> bool:
 
     return False
 
-game = led_matrix.Matrix(8)
+game = led_matrix.Matrix(BRIGHTNESS)
 game.qsend()
 
-input_status: dict[str, bool] = {}
-for key in ["up", "down", "left", "right", 'z', 'x']:
-    input_status[key] = False
+input_status: dict[str, bool] = {
+    key: False for key in ["up", "down", "left", "right", 'z', 'x']
+}
 
 score = 0
 level = 1
@@ -111,8 +115,8 @@ while True:
     draw = False
 
     # If time has passed, move tetromino down and check for collisions
-    if (time()-dtime) > (1 / ((0.5*level) + 1)):
-        dtime = time()
+    if (perf_counter()-dtime) > (1 / ((0.5*level) + 1)):
+        dtime = perf_counter()
         draw = True
         tpos[1] += 1
 
@@ -182,8 +186,8 @@ while True:
                 if not collides(tetromino, [tpos[0], tpos[1]+1]):
                     tpos[1] += 1
 
-                input_status["down"] = False # Jank way to do this but fuck you
-                dtime = time()
+                input_status["down"] = False # Jank way to do this but whatever
+                dtime = perf_counter()
 
             case 'x':
                 while not collides(tetromino, tpos):
@@ -220,4 +224,3 @@ while True:
                 game.set_matrix(tpos[0]+x, tpos[1]+y, 1)
 
     game.qsend()
-

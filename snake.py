@@ -1,9 +1,9 @@
 import led_matrix
-import random
-from time import time
 from keyboard import is_pressed
+from random import randint
+from time import perf_counter
 
-BRIGHTNESS = 128
+BRIGHTNESS = 64
 
 def directional_move(coords: list[int], direction: str, offset: int) -> list[int]:
 
@@ -27,12 +27,9 @@ def is_valid(direction, key_pressed: str) -> bool:
 
     return True
 
-
-random.seed(time())
-
 gameboard: led_matrix.Matrix = led_matrix.Matrix(BRIGHTNESS)
 
-apple: list[int] = [random.randint(0, 8), random.randint(0, 33)]
+apple: list[int] = [randint(0, 8), randint(0, 33)]
 snake: list[list[int]] = [[4, 16]]
 
 input_queue: list[str] = []
@@ -56,7 +53,7 @@ while not input_queue:
 
 while True:
 
-    dtime = time()
+    dtime = perf_counter()
     prev = snake[0].copy()
 
     # If snake on apple, extend snake and move apple
@@ -65,7 +62,7 @@ while True:
         snake.append(directional_move(snake[-1].copy(), input_queue[0], -1))
 
         while apple in snake:
-            apple = [random.randint(0, 8), random.randint(0, 33)]
+            apple = [randint(0, 8), randint(0, 33)]
 
     # Move snake head in whichever direction
     snake[0] = directional_move(snake[0], input_queue[0], 1)
@@ -105,7 +102,7 @@ while True:
     # This is sucks, but live input on wayland in python seems to just suck
     # Basically, track if a key if pressed or not. If it's newly pressed, then
     # check if the input is valid (not opposite). If it is, add it to the input_queue.
-    while time()-dtime < 0.1:
+    while perf_counter()-dtime < 0.1:
 
         for key in ["up", "down", "left", "right"]:
             if is_pressed(key) != input_status[key]:
