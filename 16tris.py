@@ -74,7 +74,7 @@ def next_tetromino():
     return TETROMINOS[tetromino_queue.pop()]
 
 
-def collides(tetromino: list[list[int]], position: list[int]) -> bool:
+def collides(tetromino: list, position: list) -> bool:
     """Checks if a tetromino in a given position collides with anything"""
     for y in range(len(tetromino)):
         for x in range(len(tetromino[y])):
@@ -104,7 +104,7 @@ level = 1
 tpos = [3, 0]
 tetromino_queue = []
 tetromino = next_tetromino()
-junk = [[0 for i in range(9)] for i in range(34)]
+junk = [[0 for _ in range(9)] for _ in range(34)]
 
 dtime = 0
 

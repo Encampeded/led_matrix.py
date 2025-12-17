@@ -100,7 +100,7 @@ while True:
     gameboard.qsend()
 
     # This is sucks, but live input on wayland in python seems to just suck
-    # Basically, track if a key if pressed or not. If it's newly pressed, then
+    # Basically, track if a key is pressed or not. If it's newly pressed, then
     # check if the input is valid (not opposite). If it is, add it to the input_queue.
     while perf_counter()-dtime < 0.1:
 

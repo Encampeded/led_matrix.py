@@ -12,35 +12,36 @@ def check_brightness(brightness: int) -> None:
 class Matrix:
 
     def __init__(self, default_brightness: int = 128, serial_port: str = "/dev/ttyACM0") -> None:
+        self._matrix = []
         self.reset()
-        self.default_brightness = default_brightness
+        self._default_brightness = default_brightness
         self.serial_port = Serial(serial_port, 115200)
 
     # While 305 is the bottom left, we need 6 extra values
     # for qsend, whose last 8bits start at 304
     def reset(self, brightness: int = 0) -> None:
-        self.matrix = [brightness for i in range(312)]
+        self._matrix = [brightness for _ in range(312)]
 
     def set_brightness(self, brightness: int) -> None:
         check_brightness(brightness)
 
-        self.default_brightness = brightness
+        self._default_brightness = brightness
 
     def set_matrix(self, x: int, y: int, brightness: int = None) -> None:
-        if brightness is None: brightness = self.default_brightness
+        if brightness is None: brightness = self._default_brightness
 
         check_coords(x, y)
         check_brightness(brightness)
 
-        self.matrix[(y * 9) + x] = brightness
+        self._matrix[(y * 9) + x] = brightness
 
     def get_matrix(self, x: int, y: int) -> int:
         check_coords(x, y)
 
-        return self.matrix[(y * 9) + x]
+        return self._matrix[(y * 9) + x]
 
     def draw_line(self, point1: list[int], point2: list[int], fade: int = 0, brightness: int = None) -> None:
-        if brightness is None: brightness = self.default_brightness
+        if brightness is None: brightness = self._default_brightness
 
         # Range wrapper that supports betterate(10, 0), going from 10-0
         # Also includes the last number. probably unnecessary, but eh
@@ -55,9 +56,6 @@ class Matrix:
             if reverse: result_list.reverse()
 
             return result_list
-
-
-        points = []
 
         # Vertical Line
         if point1[0] == point2[0]:
@@ -93,7 +91,7 @@ class Matrix:
                 self.set_matrix(x+x_offset, y+y_offset, value)
 
     # Copied from framework example
-    def send(self, command_id: int, parameters: list[str], with_response: bool = False) -> bytes | None:
+    def send(self, command_id: int, parameters: list, with_response: bool = False) -> bytes | None:
 
         self.serial_port.write([0x32, 0xAC, command_id] + parameters)
 
@@ -110,7 +108,7 @@ class Matrix:
         for x in range(9):
             column = []
             for y in range(x, 312, 9):
-                column.append(self.matrix[y])
+                column.append(self._matrix[y])
             columns.append(column)
 
         for i in range(9):
@@ -121,7 +119,7 @@ class Matrix:
     # Quick Send, uses DrawBW (0x06) that takes 33 8-bit integers, each
     # representing 8 LEDs starting from (0, 0)
     def qsend(self, brightness: int = None) -> None:
-        if brightness is None: brightness = self.default_brightness
+        if brightness is None: brightness = self._default_brightness
 
         matrix_encoded = []
 
@@ -129,7 +127,7 @@ class Matrix:
 
             # Slice our matrix into the line of 8 and reverse bc int(x, 2)
             # reads it reversed for some reason
-            line = [bool(i) for i in self.matrix[i:i + 8][::-1]]
+            line = [bool(i) for i in self._matrix[i:i + 8][::-1]]
 
             # Copied from https://stackoverflow.com/a/68424066, convert our
             # bool array to int 0/1, convert to integer using binary
