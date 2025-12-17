@@ -83,6 +83,15 @@ class Matrix:
                 self.set_matrix(points[i][0], points[i][1],
                                 int(brightness - ((b + 1) * bdiff)))
 
+    def draw_2d(self, image: list[list[int]], x: int = 0, y: int = 0, override: bool = False):
+        for y_offset, row in enumerate(image):
+            for x_offset, value in enumerate(row):
+
+                if not override and not value:
+                    continue
+
+                self.set_matrix(x+x_offset, y+y_offset, value)
+
     # Copied from framework example
     def send(self, command_id: int, parameters: list[str], with_response: bool = False) -> bytes | None:
 

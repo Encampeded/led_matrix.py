@@ -73,6 +73,27 @@ matrix.draw_line([2, 0], [8, 0], fade=3)
 matrix.draw_line([2, 0], [8, 0], brightness=3)
 ```
 
+Draw 2 dimensional arrays with draw_2d.
+```python
+image = [
+    [64, 0,  64, 0, 64],
+    [64, 64, 64, 0, 64],
+    [64, 0,  64, 0, 64]
+]
+
+matrix.draw_2d(image, 2, 3)
+
+# Draw_2d automatically ignores zeros. To draw them, even over already-set points, set override to True)
+blank_image = [
+    [0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0]
+]
+
+# Erases our HI message
+matrix.draw_2d(blank_image, 2, 3, override = True)
+```
+
 Send patterns or other custom commands using send(command, [parameters])
 
 Comand Reference: https://github.com/FrameworkComputer/inputmodule-rs/blob/main/commands.md

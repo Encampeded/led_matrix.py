@@ -212,15 +212,8 @@ while True:
 
     game.reset()
 
-    # Draw junk
-    for y, _ in enumerate(junk):
-        for x, value in enumerate(junk[y]):
-            game.set_matrix(x, y, value)
-
-    # Draw tetromino
-    for y, _ in enumerate(tetromino):
-        for x, _ in enumerate(tetromino[y]):
-            if tetromino[y][x]:
-                game.set_matrix(tpos[0]+x, tpos[1]+y, 1)
+    # Draw junk and tetromino
+    game.draw_2d(junk)
+    game.draw_2d(tetromino, tpos[0], tpos[1], False)
 
     game.qsend()
