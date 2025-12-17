@@ -15,7 +15,7 @@ matrix = led_matrix.Matrix()
 # All methods use default_brightness as the default brightness (duh) when it's unspecified
 matrix = led_matrix.Matrix(64)
 ```
-Set LEDs on/off using set_matrix()
+Set LEDs on/off using set_matrix
 
 The matrix starts at the top left at (0, 0), and ends at (8, 33)
 ```python
@@ -25,17 +25,16 @@ matrix.set_matrix(0, 0)
 matrix.set_matrix(1, 0, 255)
 ```
 
-Change the default_brightness with set_brightness()
-
+Change the default_brightness with set_brightness.
 ```python
 matrix.set_brightness(255)
 matrix.set_matrix(0, 1) # 255
 ```
-Use qsend() or csend() to display the current array on the matrix
+Use qsend or csend to display the current array on the matrix.
 
-csend() includes per-led brightness however it is somewhat slow (~200ms)
+csend (column send) includes per-led brightness however it is somewhat slow (~200ms)
 
-qsend() displays all LEDs at the same brightness, but at significantly quicker speeds (~50ms)
+qsend (quick send) displays all LEDs at the same brightness, but at significantly quicker speeds (~50ms)
 ```python
 # Display each LED at its specified brightness
 matrix.csend()
@@ -46,8 +45,7 @@ matrix.qsend()
 matrix.qsend(32)
 ```
 
-reset() resets all LEDs to the one value
-
+Reset all LEDs to the one value using reset
 ```python
 # Turn off all LEDs
 matrix.reset()
@@ -63,7 +61,7 @@ brightness = matrix.get_matrix(0, 0)
 print(brightness) # 128 
 ```
 
-Draw horizontal or vertical lines with draw_line(point1, point2, fade, brightness)
+Draw horizontal or vertical lines with draw_line
 ```python
 matrix.draw_line([0, 0], [0, 33])
 matrix.draw_line([0, 9], [5, 9])
