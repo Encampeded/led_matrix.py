@@ -2,6 +2,7 @@ import led_matrix
 from keyboard import is_pressed
 from random import shuffle
 from time import perf_counter
+from collections import deque
 
 # ---------------- README ---------------- #
 #
@@ -68,8 +69,9 @@ def next_tetromino():
     global tetromino_queue
 
     if not tetromino_queue:
-        tetromino_queue = list(range(len(TETROMINOS)))
-        shuffle(tetromino_queue)
+        new_queue = list(range(len(TETROMINOS)))
+        shuffle(new_queue)
+        tetromino_queue.extend(new_queue)
 
     return TETROMINOS[tetromino_queue.pop()]
 
@@ -102,7 +104,7 @@ score = 0
 level = 1
 
 tpos = [3, 0]
-tetromino_queue = []
+tetromino_queue = deque()
 tetromino = next_tetromino()
 junk = [[0 for _ in range(9)] for _ in range(34)]
 
