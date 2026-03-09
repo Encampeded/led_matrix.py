@@ -65,12 +65,6 @@ Draw horizontal or vertical lines with draw_line
 ```python
 matrix.draw_line([0, 0], [0, 33])
 matrix.draw_line([0, 9], [5, 9])
-
-# Make the line fade to point2 by adding a fade length
-matrix.draw_line([2, 0], [8, 0], fade=3)
-
-# Or change the brightness of the line from default_brightness
-matrix.draw_line([2, 0], [8, 0], brightness=3)
 ```
 
 Draw 2 dimensional arrays with draw_2d.

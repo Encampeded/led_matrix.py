@@ -41,7 +41,9 @@ class Matrix:
 
         return self._matrix[(y * 9) + x]
 
-    def draw_line(self, point1: list[int], point2: list[int], fade: int = 0, brightness: int = None) -> None:
+    def draw_line(self, point1: list[int] | tuple[int, int],
+                        point2: list[int] | tuple[int, int],
+                        brightness: int = None) -> None:
         if brightness is None: brightness = self._default_brightness
 
         # Range wrapper that supports betterate(10, 0), going from 10-0
@@ -69,20 +71,13 @@ class Matrix:
         else:
             raise ValueError(f"Coordinates {point1} {point2} form diagonal line\ndraw_line() only supports horizontal and vertical lines")
 
-        if fade > len(points):
-            raise ValueError(f"Fade length {fade} longer than line length {len(points)}")
-
-        for point in (points[:-fade] if fade else points):
+        for point in points:
             self.set_matrix(point[0], point[1], brightness)
 
-        if fade:
-            bdiff = int(brightness / (fade + 1))
-            for b, i in enumerate(range(len(points) - fade, len(points))):
+    def draw_2d(self, image: list[list[int]],
+                      x: int = 0, y: int = 0,
+                      override: bool = False):
 
-                self.set_matrix(points[i][0], points[i][1],
-                                int(brightness - ((b + 1) * bdiff)))
-
-    def draw_2d(self, image: list[list[int]], x: int = 0, y: int = 0, override: bool = False):
         for y_offset, row in enumerate(image):
             for x_offset, value in enumerate(row):
 
