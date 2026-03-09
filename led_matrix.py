@@ -86,13 +86,13 @@ class Matrix:
 
                 self.set_matrix(x+x_offset, y+y_offset, value)
 
-    # Copied from framework example
+    # Adapted from framework example
     def send(self, command_id: int, parameters: list, with_response: bool = False) -> bytes | None:
 
-        self.serial_port.write([0x32, 0xAC, command_id] + parameters)
+        self._serial_port.write([0x32, 0xAC, command_id] + parameters)
 
         if with_response:
-            return self.serial_port.read(32)
+            return self._serial_port.read(32)
 
         return None
 
@@ -100,36 +100,25 @@ class Matrix:
     # Sends each of the 9 columns individually, then draws (flushes) them
     def csend(self) -> None:
 
-        columns = []
-        for x in range(9):
-            column = []
-            for y in range(x, 312, 9):
-                column.append(self._matrix[y])
-            columns.append(column)
+        columns = [
+            [self._matrix[y] for y in range(x, 312, 9)]
+            for x in range(9)
+        ]
 
         for i in range(9):
             self.send(0x07, [i, *columns[i]])
 
         self.send(0x08, [])
 
-    # Quick Send, uses DrawBW (0x06) that takes 33 8-bit integers, each
-    # representing 8 LEDs starting from (0, 0)
+    # Quick Send, uses DrawBW (0x06) that takes 39 8-bit integers, each
+    # representing 8 LEDs starting from (0, 0) and wrapping around lines
     def qsend(self, brightness: int = None) -> None:
         if brightness is None: brightness = self._default_brightness
 
-        matrix_encoded = []
-
-        for i in range(0, 312, 8):
-
-            # Slice our matrix into the line of 8 and reverse bc int(x, 2)
-            # reads it reversed for some reason
-            line = [bool(i) for i in self._matrix[i:i + 8][::-1]]
-
-            # Copied from https://stackoverflow.com/a/68424066, convert our
-            # bool array to int 0/1, convert to integer using binary
-            line = int("".join(["01"[i] for i in line]), 2)
-
-            matrix_encoded.append(line)
+        matrix_encoded = [
+            sum(int(bool(bit)) << j for j, bit in enumerate(self._matrix[i:i+8]))
+            for i in range(0, 312, 8)
+        ]
 
         self.send(0x06, matrix_encoded)
         self.send(0x00, [brightness])
