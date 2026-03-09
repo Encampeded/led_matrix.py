@@ -1,21 +1,22 @@
 from serial import Serial
 
-def check_coords(x: int, y: int) -> None:
-    if not (0 <= x <= 8 and 0 <= y <= 33):
-        raise ValueError(f"Coordinates ({x}, {y}) out of range. X must be 0-8 and Y must be 0-33")
-
-def check_brightness(brightness: int) -> None:
-    if not 0 <= brightness <= 255:
-        raise ValueError(f"Brightness {brightness} out of range. Brightness must be 0-255")
-
-
 class Matrix:
 
-    def __init__(self, default_brightness: int = 128, serial_port: str = "/dev/ttyACM0") -> None:
+    def __init__(self, default_brightness: int = 128, serial_port: str = "/dev/ttyACM0"):
         self._matrix = []
         self.reset()
         self._default_brightness = default_brightness
-        self.serial_port = Serial(serial_port, 115200)
+        self._serial_port = Serial(serial_port, 115200)
+
+    @staticmethod
+    def check_coords(x: int, y: int) -> None:
+        if not (0 <= x <= 8 and 0 <= y <= 33):
+            raise ValueError(f"Coordinates ({x}, {y}) out of range. X must be 0-8 and Y must be 0-33")
+
+    @staticmethod
+    def check_brightness(brightness: int) -> None:
+        if not 0 <= brightness <= 255:
+            raise ValueError(f"Brightness {brightness} out of range. Brightness must be 0-255")
 
     # While 305 is the bottom left, we need 6 extra values
     # for qsend, whose last 8bits start at 304
@@ -23,20 +24,20 @@ class Matrix:
         self._matrix = [brightness for _ in range(312)]
 
     def set_brightness(self, brightness: int) -> None:
-        check_brightness(brightness)
+        self.check_brightness(brightness)
 
         self._default_brightness = brightness
 
     def set_matrix(self, x: int, y: int, brightness: int = None) -> None:
         if brightness is None: brightness = self._default_brightness
 
-        check_coords(x, y)
-        check_brightness(brightness)
+        self.check_coords(x, y)
+        self.check_brightness(brightness)
 
         self._matrix[(y * 9) + x] = brightness
 
     def get_matrix(self, x: int, y: int) -> int:
-        check_coords(x, y)
+        self.check_coords(x, y)
 
         return self._matrix[(y * 9) + x]
 
