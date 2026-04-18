@@ -1,4 +1,14 @@
+import atexit
+from collections import namedtuple
+from collections.abc import Iterable
 from serial import Serial
+
+# led_matrix.py
+# https://github.com/Encampeded/led_matrix.py
+
+Point = namedtuple("Point", ['x', 'y'])
+
+Coordinate = Point | tuple[int, int] | list[int]
 
 class Matrix:
 
@@ -36,14 +46,24 @@ class Matrix:
 
         self._matrix[(y * 9) + x] = brightness
 
+    def set_point(self, point: Coordinate, brightness: int | None = None) -> None:
+        return self.set_matrix(point[0], point[1], brightness)
+
+    def set_points(self, points: Iterable[Coordinate], brightness: int | None = None) -> None:
+        for point in points:
+            self.set_point(point, brightness)
+
     def get_matrix(self, x: int, y: int) -> int:
         self.check_coords(x, y)
 
         return self._matrix[(y * 9) + x]
 
-    def draw_line(self, point1: list[int] | tuple[int, int],
-                        point2: list[int] | tuple[int, int],
-                        brightness: int = None) -> None:
+    def get_point(self, point: Coordinate) -> int:
+        return self.get_matrix(point[0], point[1])
+
+    def draw_line(self, point1: Coordinate,
+                        point2: Coordinate,
+                        brightness: int | None = None) -> None:
         if brightness is None: brightness = self._default_brightness
 
         # Range wrapper that supports betterate(10, 0), going from 10-0
@@ -74,9 +94,8 @@ class Matrix:
         for point in points:
             self.set_matrix(point[0], point[1], brightness)
 
-    def draw_2d(self, image: list[list[int]],
-                      x: int = 0, y: int = 0,
-                      override: bool = False):
+    def draw_2d(self, image: list[list[int]] | tuple[tuple[int, ...], ...],
+                      point: Coordinate, override: bool = False):
 
         for y_offset, row in enumerate(image):
             for x_offset, value in enumerate(row):
@@ -84,7 +103,7 @@ class Matrix:
                 if not override and not value:
                     continue
 
-                self.set_matrix(x+x_offset, y+y_offset, value)
+                self.set_matrix(point[0]+x_offset, point[1]+y_offset, value)
 
     # Adapted from framework example
     def send(self, command_id: int, parameters: list, with_response: bool = False) -> bytes | None:
