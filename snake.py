@@ -1,23 +1,34 @@
-import led_matrix
-from keyboard import is_pressed
+from led_matrix import Matrix, Point
+from keyboard import is_pressed, read_key
 from random import randint
 from time import perf_counter
+from collections import deque
 
 BRIGHTNESS = 64
 
-def directional_move(coords: list[int], direction: str, offset: int) -> list[int]:
+def directional_move(coords: Point, direction: str, offset: int) -> Point:
+    moved_coords = list(coords)
 
     match direction:
         case 'up':
-            coords[1] -= offset
+            moved_coords[1] -= offset
         case 'down':
-            coords[1] += offset
+            moved_coords[1] += offset
         case 'left':
-            coords[0] -= offset
+            moved_coords[0] -= offset
         case 'right':
-            coords[0] += offset
+            moved_coords[0] += offset
 
-    return coords
+    # Move snake to other side of board if at edge
+    # y-coords
+    if moved_coords[1] == -1:   moved_coords[1] = 33
+    elif moved_coords[1] == 34: moved_coords[1] = 0
+
+    # x-coords
+    elif moved_coords[0] == -1: moved_coords[0] = 8
+    elif moved_coords[0] == 9:  moved_coords[0] = 0
+
+    return Point(moved_coords[0], moved_coords[1])
 
 # Checks if a keypress is valid compared to previous direction (not an opposite direction)
 def is_valid(direction, key_pressed: str) -> bool:
@@ -27,57 +38,46 @@ def is_valid(direction, key_pressed: str) -> bool:
 
     return True
 
-gameboard: led_matrix.Matrix = led_matrix.Matrix(BRIGHTNESS)
+gameboard: Matrix = Matrix(BRIGHTNESS)
 
-apple: list[int] = [randint(0, 8), randint(0, 33)]
-snake: list[list[int]] = [[4, 16]]
+apple: Point = Point(randint(0, 8), randint(0, 33))
+snake: deque[Point] = deque()
+snake.append(Point(4, 16))
 
-input_queue: list[str] = []
+input_queue: deque[str] = deque()
 input_status: dict[str, bool] = {
-    'up': False,
-    'down': False,
-    'left': False,
-    'right': False
+    key: False for key in ["up", "down", "left", "right"]
 }
 
-gameboard.set_matrix(snake[0][0], snake[0][1])
-gameboard.set_matrix(apple[0], apple[1])
+gameboard.set_point(snake[0])
+gameboard.set_point(apple)
 
 gameboard.qsend()
 
 # Wait for player input
 while not input_queue:
-    for key in ["up", "down", "left", "right"]:
-        if is_pressed(key):
-            input_queue.append(key)
+    key = read_key()
+    if key not in input_status.keys():
+        continue
+    input_queue.append(key)
 
 while True:
-
     dtime = perf_counter()
-    prev = snake[0].copy()
 
     # If snake on apple, extend snake and move apple
     if snake[0] == apple:
 
-        snake.append(directional_move(snake[-1].copy(), input_queue[0], -1))
+        snake.append(directional_move(snake[-1], input_queue[0], -1))
 
         while apple in snake:
-            apple = [randint(0, 8), randint(0, 33)]
+            apple = Point(randint(0, 8), randint(0, 33))
 
-    # Move snake head in whichever direction
-    snake[0] = directional_move(snake[0], input_queue[0], 1)
-
-    # Move snake to other side of board if at edge
-    # y-coords
-    if snake[0][1] == -1:   snake[0][1] = 33
-    elif snake[0][1] == 34: snake[0][1] = 0
-
-    # x-coords
-    elif snake[0][0] == -1: snake[0][0] = 8
-    elif snake[0][0] == 9:  snake[0][0] = 0
+    # Move snake in whichever direction
+    snake.appendleft(directional_move(snake[0], input_queue[0], 1))
+    snake.pop()
 
     # If the snake's head is in its body, end the game
-    if snake[0] in snake[1:]:
+    if snake.count(snake[0]) > 1:
 
         for i in reversed(range(0, BRIGHTNESS, 4)):
             gameboard.qsend(i)
@@ -86,16 +86,11 @@ while True:
         gameboard.qsend()
         break
 
-    # Update the snake's body
-    for i in range(1, len(snake)):
-        snake[i], prev = prev, snake[i]
-
     # Draw
     gameboard.reset()
 
-    gameboard.set_matrix(apple[0], apple[1])
-    for position in snake:
-        gameboard.set_matrix(position[0], position[1])
+    gameboard.set_point(apple)
+    gameboard.set_points(snake)
 
     gameboard.qsend()
 
@@ -109,8 +104,8 @@ while True:
 
                 input_status[key] = not input_status[key]
 
-                if is_valid(input_queue[-1], key) and input_status[key]:
+                if input_status[key] and is_valid(input_queue[-1], key):
                     input_queue.append(key)
 
     if len(input_queue) > 1:
-        input_queue.pop(0)
+        input_queue.popleft()

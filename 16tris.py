@@ -1,4 +1,4 @@
-import led_matrix
+from led_matrix import Matrix, Point
 from keyboard import is_pressed
 from random import shuffle
 from time import perf_counter
@@ -24,91 +24,91 @@ from collections import deque
 #
 # ---------------------------------------- #
 
-BRIGHTNESS = 64
+BRIGHTNESS = 255
 
-TETROMINOS = [
-    [
-        [0, 0, 0, 0],
-        [1, 1, 1, 1],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0]
-    ],
-    [
-        [1, 0, 0],
-        [1, 1, 1],
-        [0, 0, 0]
-    ],
-    [
-        [0, 0, 1],
-        [1, 1, 1],
-        [0, 0, 0]
-    ],
-    [
-        [1, 1],
-        [1, 1]
-    ],
-    [
-        [0, 1, 1],
-        [1, 1, 0],
-        [0, 0, 0]
-    ],
-    [
-        [0, 1, 0],
-        [1, 1, 1],
-        [0, 0, 0]
-    ],
-    [
-        [1, 1, 0],
-        [0, 1, 1],
-        [0, 0, 0]
-    ]
-]
+TETROMINOS = (
+    (
+        (0, 0, 0, 0),
+        (1, 1, 1, 1),
+        (0, 0, 0, 0),
+        (0, 0, 0, 0)
+    ),
+    (
+        (1, 0, 0),
+        (1, 1, 1),
+        (0, 0, 0)
+    ),
+    (
+        (0, 0, 1),
+        (1, 1, 1),
+        (0, 0, 0)
+    ),
+    (
+        (1, 1),
+        (1, 1)
+    ),
+    (
+        (0, 1, 1),
+        (1, 1, 0),
+        (0, 0, 0)
+    ),
+    (
+        (0, 1, 0),
+        (1, 1, 1),
+        (0, 0, 0)
+    ),
+    (
+        (1, 1, 0),
+        (0, 1, 1),
+        (0, 0, 0)
+    )
+)
 
-def next_tetromino():
+type Tetromino = tuple[tuple[int, ...], ...]
 
+def next_tetromino() -> Tetromino:
     global tetromino_queue
 
     if not tetromino_queue:
-        new_queue = list(range(len(TETROMINOS)))
+        new_queue = [i for i, _ in enumerate(TETROMINOS)]
         shuffle(new_queue)
         tetromino_queue.extend(new_queue)
 
     return TETROMINOS[tetromino_queue.pop()]
 
-
-def collides(tetromino: list, position: list) -> bool:
+def collides(tetromino: Tetromino, position: Point) -> bool:
     """Checks if a tetromino in a given position collides with anything"""
-    for y in range(len(tetromino)):
-        for x in range(len(tetromino[y])):
+    for y, _ in enumerate(tetromino):
+        for x, _ in enumerate(tetromino[y]):
 
             if not tetromino[y][x]:
                 continue
 
-            coords = [position[0]+x, position[1]+y]
+            current_point = Point(position.x+x, position.y+y)
 
-            if not (0 <= coords[0] <= 8 and coords[1] <= 33) or \
-                junk[coords[1]][coords[0]]:
+            if not (0 <= current_point.x <= 8 and current_point.y <= 33) or \
+                junk[current_point.y][current_point.x]:
 
                 return True
 
     return False
 
-game = led_matrix.Matrix(BRIGHTNESS)
+game = Matrix(BRIGHTNESS)
 game.qsend()
 
 input_status: dict[str, bool] = {
     key: False for key in ["up", "down", "left", "right", 'z', 'x']
 }
 
-score = 0
-level = 1
+score: int = 0
+level: int = 1
 
-tpos = [3, 0]
-tetromino_queue = deque()
-tetromino = next_tetromino()
-junk = [[0 for _ in range(9)] for _ in range(34)]
+tpos: Point = Point(3, 0)
+tetromino_queue: deque[int] = deque()
+current_tetromino: Tetromino = next_tetromino()
+junk: list[list[int]] = [[0 for _ in range(9)] for _ in range(34)]
 
-dtime = 0
+dtime: float = 0.0
 
 while True:
 
@@ -120,16 +120,16 @@ while True:
     if (perf_counter()-dtime) > (1 / ((0.5*level) + 1)):
         dtime = perf_counter()
         draw = True
-        tpos[1] += 1
+        tpos = Point(tpos.x, tpos.y + 1)
 
-        if collides(tetromino, tpos):
+        if collides(current_tetromino, tpos):
 
             # Add current tetromino to junk
-            for y, _ in enumerate(tetromino):
-                for x, _ in enumerate(tetromino[y]):
+            for y, _ in enumerate(current_tetromino):
+                for x, _ in enumerate(current_tetromino[y]):
 
-                    if tetromino[y][x]:
-                        junk[tpos[1]-1 + y][tpos[0] + x] = 1
+                    if current_tetromino[y][x]:
+                        junk[tpos.y-1 + y][tpos.x + x] = 1
 
             # Check for new rows
             cleared_rows = [ i for i, row in enumerate(junk) if set(row) == {1} ]
@@ -151,11 +151,11 @@ while True:
                     junk.insert(0, [0 for i in range(9)])
 
             # Generate new tetromino
-            tpos = [3, 0]
-            tetromino = next_tetromino()
+            tpos = Point(3, 0)
+            current_tetromino = next_tetromino()
 
             # If newly generated tetromino collides, do game over animation and quit
-            if collides(tetromino, tpos):
+            if collides(current_tetromino, tpos):
                 for y in range(34):
                     game.draw_line([0, y], [8, y], brightness = 0)
                     game.qsend()
@@ -177,45 +177,46 @@ while True:
 
         match key:
             case "left":
-                if not collides(tetromino, [tpos[0]-1, tpos[1]]):
-                    tpos[0] -= 1
+                if not collides(current_tetromino, Point(tpos.x - 1, tpos.y)):
+                    tpos = Point(tpos.x - 1, tpos.y)
 
             case "right":
-                if not collides(tetromino, [tpos[0]+1, tpos[1]]):
-                    tpos[0] += 1
+                if not collides(current_tetromino, Point(tpos.x+1, tpos.y)):
+                    tpos = Point(tpos.x + 1, tpos.y)
 
             case "down":
-                if not collides(tetromino, [tpos[0], tpos[1]+1]):
-                    tpos[1] += 1
+                if not collides(current_tetromino, Point(tpos.x, tpos.y+1)):
+                    tpos = Point(tpos.x, tpos.y + 1)
 
                 input_status["down"] = False # Jank way to do this but whatever
                 dtime = perf_counter()
 
             case 'x':
-                while not collides(tetromino, tpos):
-                    tpos[1] += 1
-                tpos[1] -= 1
+                while not collides(current_tetromino, tpos):
+                    tpos = Point(tpos.x, tpos.y + 1)
+                tpos = Point(tpos.x, tpos.y - 1)
                 dtime = 0
 
             case "up":
-                rotated_tetromino = list(zip(*tetromino[::-1]))
+                rotated_tetromino = tuple(zip(*current_tetromino[::-1]))
                 if not collides(rotated_tetromino, tpos):
-                    tetromino = rotated_tetromino
+                    current_tetromino = rotated_tetromino
             case 'z':
-                rotated_tetromino = list(zip(*tetromino))[::-1]
+                rotated_tetromino = tuple(zip(*current_tetromino))[::-1]
                 if not collides(rotated_tetromino, tpos):
-                    tetromino = rotated_tetromino
+                    current_tetromino = rotated_tetromino
 
     # ---------------- DRAW ---------------- #
 
     if not draw:
         continue
+
     print(f"\033cLevel: {level}\nScore: {score}")
 
     game.reset()
 
     # Draw junk and tetromino
-    game.draw_2d(junk)
-    game.draw_2d(tetromino, tpos[0], tpos[1], False)
+    game.draw_2d(junk, (0, 0))
+    game.draw_2d(current_tetromino, tpos)
 
     game.qsend()

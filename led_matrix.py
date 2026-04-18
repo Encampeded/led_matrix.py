@@ -17,11 +17,12 @@ class Matrix:
         self.reset()
         self._default_brightness = default_brightness
         self._serial_port = Serial(serial_port, 115200)
+        atexit.register(self._serial_port.close)
 
     @staticmethod
     def check_coords(x: int, y: int) -> None:
         if not (0 <= x <= 8 and 0 <= y <= 33):
-            raise ValueError(f"Coordinates ({x}, {y}) out of range. X must be 0-8 and Y must be 0-33")
+            raise IndexError(f"Coordinates ({x}, {y}) out of range. X must be 0-8 and Y must be 0-33")
 
     @staticmethod
     def check_brightness(brightness: int) -> None:
@@ -38,7 +39,7 @@ class Matrix:
 
         self._default_brightness = brightness
 
-    def set_matrix(self, x: int, y: int, brightness: int = None) -> None:
+    def set_matrix(self, x: int, y: int, brightness: int | None = None) -> None:
         if brightness is None: brightness = self._default_brightness
 
         self.check_coords(x, y)
@@ -72,7 +73,7 @@ class Matrix:
 
             # Reverse if the start is greater.
             reverse = start > to
-            if start > to:
+            if reverse:
                 start, to = to, start
 
             result_list = list(range(start, to + 1))
@@ -117,10 +118,10 @@ class Matrix:
 
     # Column Send, uses StageCol (0x07) and FlushCols (0x08)
     # Sends each of the 9 columns individually, then draws (flushes) them
-    def csend(self) -> None:
+    def csend(self):
 
         columns = [
-            [self._matrix[y] for y in range(x, 312, 9)]
+            [self._matrix[y] for y in range(x, 306, 9)]
             for x in range(9)
         ]
 
@@ -131,7 +132,7 @@ class Matrix:
 
     # Quick Send, uses DrawBW (0x06) that takes 39 8-bit integers, each
     # representing 8 LEDs starting from (0, 0) and wrapping around lines
-    def qsend(self, brightness: int = None) -> None:
+    def qsend(self, brightness: int | None = None):
         if brightness is None: brightness = self._default_brightness
 
         matrix_encoded = [
