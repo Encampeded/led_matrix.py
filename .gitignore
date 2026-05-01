@@ -1,0 +1,8 @@
+*
+!pyproject.toml
+!.gitignore
+!LICENSE
+!README.md
+!led_matrix.py
+!examples/
+!examples/*
