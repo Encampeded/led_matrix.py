@@ -1,0 +1,10 @@
+[project]
+name = "led_matrix.py"
+version = "1.0"
+description = "A simple Python library for interfacing with the Framework 16 LED Matrix"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = ["pyserial"]
+
+[tool.setuptools]
+py-modules = ["led_matrix"]

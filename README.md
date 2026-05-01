@@ -3,7 +3,22 @@ A simple Python library for interfacing with the Framework 16 LED Matrix
 
 ## Installation
 
-Install [pyserial](https://pypi.org/project/pyserial/) (and [keyboard](https://pypi.org/project/keyboard/) if you want to try the example games) and copy [led_matrix.py](led_matrix.py) to your project folder. Maybe I'll put this on PyPI some day, but that day is not today.
+Install [pyserial](https://pypi.org/project/pyserial/) and copy [led_matrix.py](led_matrix.py) to your project folder.
+
+Alternatively, if you'd like to install with pip, run the following commands:
+```bash
+$ git clone https://github.com/Encampeded/led_matrix.py
+$ cd led_matrix.py
+$ pip install -e .
+```
+Maybe I'll put this on PyPI some day, but that day is not today.
+
+If you'd like to try the example games, follow the above instructions to install with pip, then run the following commands:
+```bash
+$ cd examples
+$ pip install -r requirements.txt
+```
+Then, run whichever example program you want.
 
 ## Usage
 
@@ -120,7 +135,7 @@ blank_image = [
 matrix.draw_2d(blank_image, draw_point, override = True)
 ```
 
-Send patterns or other custom commands using send(command, [parameters])
+Send patterns or other custom commands using `send(command, [parameters])`
 
 Command Reference: https://github.com/FrameworkComputer/inputmodule-rs/blob/main/commands.md
 ```python
