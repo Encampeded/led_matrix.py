@@ -9,7 +9,7 @@ Alternatively, if you'd like to install with pip, run the following commands:
 ```bash
 $ git clone https://github.com/Encampeded/led_matrix.py
 $ cd led_matrix.py
-$ pip install -e .
+$ pip install .
 ```
 Maybe I'll put this on PyPI some day, but that day is not today.
 
