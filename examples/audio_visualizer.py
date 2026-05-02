@@ -180,7 +180,7 @@ if __name__ == "__main__":
     parser.add_argument("-d", "--device",
                         type=lambda x : int(x) if x.isdigit() else x,
                         default="Audio Expansion Card",
-                        help="input device (numeric ID or substring, see --list-devices) (default \"%(default)s)\"")
+                        help="input device (numeric ID or substring, see --list-devices) (default \"%(default)s\")3")
 
     parser.add_argument("-g", "--gain",
                         type=float, default=10,
@@ -227,6 +227,7 @@ if __name__ == "__main__":
     )
 
     with visualizer:
+        print("\x1b[31;40m", usage, "\x1b[0m", sep="")
         while True:
             response = input().lower().strip()
 
